@@ -1,3 +1,5 @@
+use std::ops::{Index, IndexMut};
+
 use crate::visual::color::Color;
 
 pub struct Canvas {
@@ -20,12 +22,23 @@ impl Canvas {
         self.h
     }
 
-    pub fn pixels(&self) -> &Vec<Color> {
-        &self.pixels
+    pub fn pixels(&mut self) -> &mut Vec<Color> {
+        &mut self.pixels
     }
+}
 
-    pub fn write_pixel(&mut self, w: usize, h: usize, pix: Color) {
-        self.pixels[w*h] = pix;
+impl Index<usize> for Canvas {
+    type Output = [Color];
+    fn index(&self, row: usize) -> &Self::Output {
+        let start = row * self.w;
+        &self.pixels[start..start + self.w]
+    }
+}
+
+impl IndexMut<usize> for Canvas {
+    fn index_mut(&mut self, row: usize) -> &mut [Color] {
+        let start = row * self.w;
+        &mut self.pixels[start..start + self.w]
     }
 }
 
@@ -51,13 +64,12 @@ mod tests {
     fn writing_pixels_to_a_canvas() {
         // Arrange
         let mut c = Canvas::new(10, 20);
-        let red = Color::new(1.0, 0.0, 0.0);
+        let red = Color::red();
 
         // Act
-        c.write_pixel(2, 3, red);
+        c[2][3] = red;
 
         // Assert
-        assert_eq!(c.pixels[2*3], red);
-
+        assert_eq!(c.pixels[2*10 + 3], red);
     }
 }
