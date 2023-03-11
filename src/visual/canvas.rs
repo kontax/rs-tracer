@@ -23,6 +23,10 @@ impl Canvas {
     pub fn pixels(&self) -> &Vec<Color> {
         &self.pixels
     }
+
+    pub fn write_pixel(&mut self, w: usize, h: usize, pix: Color) {
+        self.pixels[w*h] = pix;
+    }
 }
 
 #[cfg(test)]
@@ -41,5 +45,19 @@ mod tests {
         for p in c.pixels {
             assert_eq!(p, black);
         }
+    }
+
+    #[test]
+    fn writing_pixels_to_a_canvas() {
+        // Arrange
+        let mut c = Canvas::new(10, 20);
+        let red = Color::new(1.0, 0.0, 0.0);
+
+        // Act
+        c.write_pixel(2, 3, red);
+
+        // Assert
+        assert_eq!(c.pixels[2*3], red);
+
     }
 }
